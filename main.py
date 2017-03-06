@@ -4,7 +4,7 @@ __author__ = 'keven'
 import numpy as np
 import os, sys, timeit
 
-from data import node_selection, read_graph
+from data import node_selection, read_graph, save_data, load_data
 from model import build_cnn
 from scoring import multi_label_classification
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
@@ -44,6 +44,7 @@ def main():
 	parser.add_argument('--input', required=True, help='Input graph file')
 	parser.add_argument('--label', required=True, help='Input label file')
 	parser.add_argument('--output', required=True, help='Output Embedding file')
+	parser.add_argument('--temp', required=True, help='Temporal file for saving data')
 	parser.add_argument('--neighbor', default=200, type=int, help='Number of neighbor in constructing features')
 	parser.add_argument('--negative', default=5, type=int, help='Number of negative sampling edges')
 	parser.add_argument('--iteration', default=10, type=int, help='Number of iteration')
@@ -59,6 +60,9 @@ def main():
 	start_time_1 = timeit.default_timer()
 	# features, edges, neg_edges, node2id = read_graph(args.input, args.neighbor, args.negative)
 	features, edges, neg_edges, node2id = node_selection(args.input, 2, args.neighbor, args.negative)
+	# save_data(features, edges, neg_edges, node2id, args.temp)
+	# features, edges, neg_edges, node2id = load_data(args.temp)
+
 	end_time_1 = timeit.default_timer()
 	print 'Run for constructing %.2fs' % (end_time_1 - start_time_1)
 	start_time_2 = timeit.default_timer()

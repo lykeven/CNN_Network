@@ -15,6 +15,9 @@ from sklearn.utils import shuffle as skshuffle
 
 from collections import defaultdict
 from gensim.models import Word2Vec
+import warnings
+warnings.filterwarnings("ignore")
+
 
 class TopKRanker(OneVsRestClassifier):
     def predict(self, X, top_k_list):

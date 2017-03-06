@@ -4,6 +4,7 @@ __author__ = 'keven'
 import numpy as np
 import networkx as nx
 import os, sys, timeit, random
+import pickle
 
 
 def read_graph(filename, K, T):
@@ -120,7 +121,7 @@ def node_selection(filename, num_channel, num_neighbor, num_negative):
 		dis_degree = dict([(v, [dis, 1.0 / (1 + measurement[v])]) for v, dis in neighbors_dict.items()])
 		sorted_neighbor = sorted(dis_degree.items(), key=lambda d: d[1], reverse=False)[:num_neighbor]
 		# construct receptive field with CNN
-		X[i, :] = features[[v for v, measure in sorted_neighbor]].T
+		X[i, :] = features[[node2id[v] for v, measure in sorted_neighbor]].T
 
 	for i in range(num_channel):
 		m = np.mean(X[:, i, :])
@@ -129,3 +130,23 @@ def node_selection(filename, num_channel, num_neighbor, num_negative):
 	X = np.reshape(X, (n, num_channel, 1, num_neighbor))
 	neg_edges = np.asarray(neg_edges, dtype=np.int).T
 	return X, edges, neg_edges, node2id
+
+
+def save_data(features, edges, neg_edges, node2id, file):
+	object = dict()
+	object["features"] = features
+	object["edges"] = edges
+	object["neg_edges"] = neg_edges
+	object["node2id"] = node2id
+	with open(file, 'w') as f:
+		pickle.dump(object, f)
+
+
+def load_data(file):
+	with open(file, 'r') as f:
+		object = pickle.load(f)
+	features = object["features"]
+	edges = object["edges"]
+	neg_edges = object["neg_edges"]
+	node2id = object["node2id"]
+	return features, edges, neg_edges, node2id
